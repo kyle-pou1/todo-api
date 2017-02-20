@@ -1,19 +1,11 @@
 var express = require('express')
+var bodyParser = require('body-parser');
 var app = express();
 var port = process.env.PORT || 3000;
-var todos = [{
-  id: 1,
-  description: 'Meet JJ for dinner',
-  completed: false
-},{
-  id: 2,
-  description: 'Pick up milk and bread',
-  completed: false
-},{
-  id: 3,
-  description: 'Tuck myself in',
-  completed: true
-}];
+var todos = [];
+var todoNextId = 1;
+
+app.use(bodyParser.json()); //json request comes in express parses it and it can be accessed via req.body;
 
 app.get('/', function(req, res) {
     res.send('Todo API Route');
@@ -36,6 +28,13 @@ app.get('/todos/:id', function(req, res) { //:id is what express uses to parse t
       res.status(200).json(matchedTodo);
     }
     res.status(404).send();
+})
+
+app.post('/todos', function(req, res) {
+    var body = req.body;
+    body.id = todoNextId++;
+    todos.push(body);
+    res.status(200).json(body);
 })
 
 
